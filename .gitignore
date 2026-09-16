@@ -1,0 +1,26 @@
+node_modules/
+.env
+dist/
+build/
+.cache/
+*.log
+.DS_Store
+.claude/*
+!.claude/skills/
+NOTES.md
+.bashrc.user
+.plugins
+exp
+
+# We keep the repos folder and its README.md file, but we
+# ignore everything else inside of it (e.g., nested repos)
+/repos/*
+!/repos/README.md
+
+# Same pattern for the student work folder — keep it and its README.md,
+# ignore everything students put inside it (their own cloned repos)
+/work/*
+!/work/README.md
+
+# Other things that only I care about
+.bashrc.canvas

@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# ================================================================
+# post-start.sh — runs every time the devcontainer starts
+# ================================================================
+set -euo pipefail
+
+echo "🚀 Dev container started."
+
+# Fix Docker socket group so vscode (member of 'docker') can access it.
+# The socket is owned root:root on some hosts; chown it to root:docker here.
+if [ -S /var/run/docker.sock ]; then
+  sudo chown root:docker /var/run/docker.sock 2>/dev/null || true
+fi
+
+# Verify Docker socket is accessible
+if docker info &>/dev/null; then
+  echo "🐳 Docker socket: OK"
+  echo "   Active containers:"
+  docker ps --format "     • {{.Names}} ({{.Status}})" 2>/dev/null || true
+else
+  echo "⚠️  Docker socket not yet available — DinD may still be initialising."
+fi
+
+echo "🌐 Network 'gantry' containers:"
+docker network inspect gantry \
+  --format '{{range .Containers}}     • {{.Name}} ({{.IPv4Address}}){{"\n"}}{{end}}' \
+  2>/dev/null || echo "   (none yet — start services with dc-up <service>)"
+
+# Git identity check — runs on every start so users are reminded after a rebuild
+_GIT_NAME=$(git config --global user.name 2>/dev/null || true)
+_GIT_EMAIL=$(git config --global user.email 2>/dev/null || true)
+if [[ -z "$_GIT_NAME" || -z "$_GIT_EMAIL" ]]; then
+  echo "⚠️  Git identity not configured. Run:"
+  echo '     git config --global user.name  "Your Name"'
+  echo '     git config --global user.email "you@example.com"'
+else
+  echo "🔑 Git identity: ${_GIT_NAME} <${_GIT_EMAIL}>"
+fi
+unset _GIT_NAME _GIT_EMAIL
+
+# GitHub CLI auth status
+if gh auth status &>/dev/null; then
+  GH_USER=$(gh api user --jq .login 2>/dev/null || echo "unknown")
+  echo "🐙 GitHub CLI: authenticated as ${GH_USER}"
+else
+  echo "⚠️  GitHub CLI: not authenticated — run 'gh auth login' in this terminal."
+  echo "   This persists across restarts and rebuilds, so you only need to do it once."
+fi
+
+# ---- Plugin loader + auto-update --------------------------------
+if [[ -f /gantry/.plugins/.registry.json ]]; then
+  # Regenerate loader synchronously so commands are available the moment
+  # the first terminal opens, regardless of any background activity.
+  bash /gantry/.devcontainer/scripts/plugin-manager.sh generate-loader 2>/dev/null || true
+
+  plugin_count=$(jq '.plugins | length' /gantry/.plugins/.registry.json 2>/dev/null || echo 0)
+  if [[ "$plugin_count" -gt 0 ]]; then
+    echo "🔌 Auto-updating ${plugin_count} plugin(s) in background..."
+    bash /gantry/.devcontainer/scripts/plugin-manager.sh update --all --quiet &
+  fi
+fi
+
+# ---- Local extension hook ---------------------------------------
+# See the matching note in post-create.sh — no-op in gantry itself.
+if [[ -f /gantry/.devcontainer/scripts/post-start.local.sh ]]; then
+  bash /gantry/.devcontainer/scripts/post-start.local.sh
+fi

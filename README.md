@@ -103,13 +103,13 @@ is as fast as opening any other app.
    for **"Dev Containers,"** and click **Install** on the one published by
    Microsoft.
 
-4. **Get your own copy of this repository.** Two ways to do this —
-   either works:
+4. **Get your own copy of this repository.** A few ways to do this —
+   pick whichever you're most comfortable with:
 
-   - **Easiest:** Back on this repository's GitHub page, click **"Use
-     this template" → "Create a new repository,"** name it, and click
-     **"Create repository."** Then, in VS Code, open the Command Palette
-     (<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> on Mac,
+   - **Easiest, and recommended:** Back on this repository's GitHub page,
+     click **"Use this template" → "Create a new repository,"** name it,
+     and click **"Create repository."** Then, in VS Code, open the
+     Command Palette (<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> on Mac,
      <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> on Windows), type
      **"Git: Clone,"** press Enter, and paste in your new repository's
      URL (copy it from the green "Code" button on its GitHub page). VS
@@ -121,6 +121,15 @@ is as fast as opening any other app.
      ```bash
      git clone https://github.com/<your-username>/<your-repo-name>.git
      ```
+   - **If you'd rather not use git at all:** go to this repository's
+     [Releases page](../../releases), download the `.zip` file from the
+     most recent release, and unzip it into a new folder on your
+     computer. This is the simplest option, but with one real tradeoff:
+     without git, you can't use `cargo-update` (see
+     [doc/UPDATING.md](doc/UPDATING.md)) to pull in future improvements —
+     you'd need to download a new release zip and manually replace files
+     each time. Fine for a short project; the template method above is
+     better if you'll be using this all semester.
      replacing the URL with your own copy's URL from its "Code" button.
 
 5. **Open the folder in VS Code**, if it isn't already open. A small

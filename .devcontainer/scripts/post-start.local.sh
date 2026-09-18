@@ -6,7 +6,7 @@
 #
 # Checks for updates from the course template (throttled to avoid
 # a network round-trip on every single container start). See
-# doc/updating.md for how students pick up an update.
+# doc/UPDATING.md for how students pick up an update.
 # ================================================================
 set -euo pipefail
 
@@ -25,8 +25,8 @@ if git -C /gantry remote get-url upstream &>/dev/null; then
       if [[ "$_BEHIND" -gt 0 ]]; then
         echo ""
         echo "📦 ${_BEHIND} update(s) available from the course template."
-        echo "   Run 'git merge upstream/main' to pick them up, then Rebuild Container."
-        echo "   See doc/updating.md for details."
+        echo "   Run 'cargo-update' to pick them up."
+        echo "   See doc/UPDATING.md for details."
         echo ""
       fi
     fi

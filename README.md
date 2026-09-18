@@ -1,5 +1,3 @@
-<title>Cargo</title>
-
 # Cargo
 
 This repository gives you a complete, ready-to-use coding environment for
